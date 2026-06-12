@@ -1,6 +1,7 @@
 package com.vcyberpunk.notes.presentation.screens.notes
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -199,7 +201,14 @@ private fun SearchBar(
     onQueryChange: (String) -> Unit
 ) {
     TextField(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .padding(horizontal = 24.dp)
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                shape = RoundedCornerShape(10.dp)
+            ),
         value = query,
         onValueChange = onQueryChange,
         placeholder = {
@@ -212,10 +221,17 @@ private fun SearchBar(
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
-                contentDescription = stringResource(R.string.search_icon_cd)
+                contentDescription = stringResource(R.string.search_icon_cd),
+                tint = MaterialTheme.colorScheme.onSurface
             )
         },
-        shape = RoundedCornerShape(10.dp)
+        shape = RoundedCornerShape(10.dp),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.surface,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent
+        )
     )
 }
 
