@@ -6,8 +6,11 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -138,13 +141,11 @@ fun NotesLoadedContent(
     onNoteLongClick: (Note) -> Unit
 ) {
     Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = modifier
     ) {
         LazyColumn(
             modifier = Modifier
-                .weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .weight(1f)
         ) {
             item {
                 Title(
@@ -155,6 +156,9 @@ fun NotesLoadedContent(
                 )
             }
             item {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            item {
                 SearchBar(
                     query = query,
                     onQueryChange = {
@@ -163,16 +167,21 @@ fun NotesLoadedContent(
                 )
             }
             item {
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+            item {
                 Subtitle(
                     modifier = Modifier.padding(horizontal = 24.dp),
                     text = stringResource(R.string.pinned)
                 )
             }
             item {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            item {
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                     contentPadding = PaddingValues(horizontal = 24.dp)
                 ) {
                     items(
@@ -185,14 +194,21 @@ fun NotesLoadedContent(
                             onClick = { onNoteClick(it) },
                             onLongClick = { onNoteLongClick(it) }
                         )
+                        Spacer(modifier = Modifier.width(8.dp))
                     }
                 }
+            }
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
             }
             item {
                 Subtitle(
                     modifier = Modifier.padding(horizontal = 24.dp),
                     text = stringResource(R.string.others)
                 )
+            }
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
             }
             items(
                 items = otherNotes,
@@ -207,7 +223,9 @@ fun NotesLoadedContent(
                     onClick = { onNoteClick(it) },
                     onLongClick = { onNoteLongClick(it) }
                 )
+                Spacer(modifier = Modifier.height(8.dp))
             }
+
         }
     }
 }
@@ -297,17 +315,20 @@ fun NoteCard(
                 onClick = { onClick(note) },
                 onLongClick = { onLongClick(note) }
             )
+            .padding(16.dp)
     ) {
         Text(
             text = note.title,
             fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onSurface
         )
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = note.updatedAt.toString(),
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+        Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = note.content,
             fontSize = 16.sp,
