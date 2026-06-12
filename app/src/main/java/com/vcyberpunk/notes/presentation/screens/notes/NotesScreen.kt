@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -36,8 +36,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vcyberpunk.notes.R
 import com.vcyberpunk.notes.domain.entity.Note
-import com.vcyberpunk.notes.presentation.theme.Green
-import com.vcyberpunk.notes.presentation.theme.Yellow200
+import com.vcyberpunk.notes.presentation.theme.OtherNotesColors
+import com.vcyberpunk.notes.presentation.theme.PinnedNotesColors
 
 @Composable
 fun NotesScreen(
@@ -184,13 +184,13 @@ fun NotesLoadedContent(
                         .fillMaxWidth(),
                     contentPadding = PaddingValues(horizontal = 24.dp)
                 ) {
-                    items(
+                    itemsIndexed(
                         items = pinnedNotes,
-                        key = { it.id }
-                    ) { note ->
+                        key = { _, note -> note.id }
+                    ) { index, note ->
                         NoteCard(
                             note = note,
-                            backgroundColor = Yellow200,
+                            backgroundColor = PinnedNotesColors[index % PinnedNotesColors.size],
                             onClick = { onNoteClick(it) },
                             onLongClick = { onNoteLongClick(it) }
                         )
@@ -210,16 +210,16 @@ fun NotesLoadedContent(
             item {
                 Spacer(modifier = Modifier.height(16.dp))
             }
-            items(
+            itemsIndexed(
                 items = otherNotes,
-                key = { it.id }
-            ) { note ->
+                key = { _, note -> note.id }
+            ) { index, note ->
                 NoteCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp),
                     note = note,
-                    backgroundColor = Green,
+                    backgroundColor = OtherNotesColors[index % OtherNotesColors.size],
                     onClick = { onNoteClick(it) },
                     onLongClick = { onNoteLongClick(it) }
                 )
