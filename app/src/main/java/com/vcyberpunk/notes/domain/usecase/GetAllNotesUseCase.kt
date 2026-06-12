@@ -8,5 +8,5 @@ class GetAllNotesUseCase(
     private val repository: NotesRepository
 ) {
 
-    suspend operator fun invoke(): Flow<List<Note>> = repository.getAllNotes()
+    operator fun invoke(): Flow<List<Note>> = repository.getAllNotes()
 }
