@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -75,6 +76,10 @@ fun NotesContent(
         is NotesScreenState.Loading -> {
             NotesLoadingContent(
                 modifier = modifier,
+                query = state.query,
+                onQueryChange = { query ->
+                    onQueryChange(query)
+                },
             )
         }
 
@@ -101,7 +106,24 @@ fun NotesContent(
 @Composable
 fun NotesLoadingContent(
     modifier: Modifier,
+    query: String,
+    onQueryChange: (String) -> Unit
 ) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Title(
+            modifier = Modifier.padding(vertical = 24.dp),
+            text = stringResource(R.string.all_notes)
+        )
+        SearchBar(
+            query = query,
+            onQueryChange = {
+                onQueryChange(it)
+            }
+        )
+    }
     CircularProgressIndicator(modifier = modifier)
 }
 
@@ -125,7 +147,12 @@ fun NotesLoadedContent(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
-                Title(text = stringResource(R.string.all_notes))
+                Title(
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp)
+                        .padding(top = 16.dp),
+                    text = stringResource(R.string.all_notes)
+                )
             }
             item {
                 SearchBar(
@@ -137,6 +164,7 @@ fun NotesLoadedContent(
             }
             item {
                 Subtitle(
+                    modifier = Modifier.padding(horizontal = 24.dp),
                     text = stringResource(R.string.pinned)
                 )
             }
@@ -144,7 +172,8 @@ fun NotesLoadedContent(
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(horizontal = 24.dp)
                 ) {
                     items(
                         items = pinnedNotes,
@@ -161,6 +190,7 @@ fun NotesLoadedContent(
             }
             item {
                 Subtitle(
+                    modifier = Modifier.padding(horizontal = 24.dp),
                     text = stringResource(R.string.others)
                 )
             }
@@ -169,7 +199,9 @@ fun NotesLoadedContent(
                 key = { it.id }
             ) { note ->
                 NoteCard(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
                     note = note,
                     backgroundColor = Green,
                     onClick = { onNoteClick(it) },
