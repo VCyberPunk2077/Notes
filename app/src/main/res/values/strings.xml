@@ -5,4 +5,9 @@
     <string name="pinned">Pinned</string>
     <string name="all_notes">All Notes</string>
     <string name="others">Others</string>
+    <string name="date_just_now">Just now</string>
+    <plurals name="date_hours_ago">
+        <item quantity="one">%d h ago</item>
+        <item quantity="other">%d h ago</item>
+    </plurals>
 </resources>

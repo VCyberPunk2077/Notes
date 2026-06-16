@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -38,6 +39,7 @@ import com.vcyberpunk.notes.R
 import com.vcyberpunk.notes.domain.entity.Note
 import com.vcyberpunk.notes.presentation.theme.OtherNotesColors
 import com.vcyberpunk.notes.presentation.theme.PinnedNotesColors
+import com.vcyberpunk.notes.presentation.utils.DateFormatter
 
 @Composable
 fun NotesScreen(
@@ -307,6 +309,7 @@ fun NoteCard(
     onClick: (Note) -> Unit,
     onLongClick: (Note) -> Unit,
 ) {
+    val context = LocalContext.current
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
@@ -324,7 +327,10 @@ fun NoteCard(
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = note.updatedAt.toString(),
+            text = DateFormatter.formatDateToString(
+                context = context,
+                timestamp = note.updatedAt
+            ),
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
