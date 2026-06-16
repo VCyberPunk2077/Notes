@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -31,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -191,6 +193,7 @@ fun NotesLoadedContent(
                         key = { _, note -> note.id }
                     ) { index, note ->
                         NoteCard(
+                            modifier = Modifier.widthIn(max = 160.dp),
                             note = note,
                             backgroundColor = PinnedNotesColors[index % PinnedNotesColors.size],
                             onClick = { onNoteClick(it) },
@@ -218,7 +221,7 @@ fun NotesLoadedContent(
             ) { index, note ->
                 NoteCard(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .widthIn(max = 160.dp)
                         .padding(horizontal = 24.dp),
                     note = note,
                     backgroundColor = OtherNotesColors[index % OtherNotesColors.size],
@@ -322,8 +325,10 @@ fun NoteCard(
     ) {
         Text(
             text = note.title,
+            maxLines = 1,
             fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
+            overflow = TextOverflow.Ellipsis
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
@@ -337,8 +342,10 @@ fun NoteCard(
         Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = note.content,
+            maxLines = 3,
             fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
