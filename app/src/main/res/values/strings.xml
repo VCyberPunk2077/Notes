@@ -6,6 +6,7 @@
     <string name="all_notes">All Notes</string>
     <string name="others">Others</string>
     <string name="date_just_now">Just now</string>
+    <string name="button_add_note">Button add note</string>
     <plurals name="date_hours_ago">
         <item quantity="one">%d h ago</item>
         <item quantity="other">%d h ago</item>

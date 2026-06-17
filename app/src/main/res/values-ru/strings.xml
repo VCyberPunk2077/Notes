@@ -13,4 +13,5 @@
         <item quantity="many">%d часов назад</item>
         <item quantity="other">%d часа назад</item>
     </plurals>
+    <string name="button_add_note">Кнопка добавления заметки</string>
 </resources>

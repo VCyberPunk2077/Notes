@@ -15,10 +15,12 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -30,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -45,20 +48,36 @@ import com.vcyberpunk.notes.presentation.utils.DateFormatter
 
 @Composable
 fun NotesScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onAddNoteClick: () -> Unit,
+    onNoteClick: (Note) -> Unit
 ) {
     val viewModel: NotesViewModel = viewModel()
     val state = viewModel.state.collectAsStateWithLifecycle()
-    Scaffold(modifier = modifier) { innerPadding ->
+    Scaffold(
+        modifier = modifier,
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onAddNoteClick,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                containerColor = MaterialTheme.colorScheme.primary,
+                shape = CircleShape
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_add_note),
+                    contentDescription = stringResource(R.string.button_add_note)
+                )
+            }
+        }
+    ) { innerPadding ->
         NotesContent(
-            modifier = modifier
-                .padding(innerPadding),
+            contentPadding = innerPadding,
             state = state.value,
             onQueryChange = { query ->
                 viewModel.processCommand(NotesCommand.InputSearchQuery(query = query))
             },
             onNoteClick = { note ->
-
+                onNoteClick(note)
             },
             onNoteLongClick = { note ->
                 viewModel.processCommand(NotesCommand.SwitchPinnedStatus(noteId = note.id))
@@ -69,11 +88,12 @@ fun NotesScreen(
 
 @Composable
 fun NotesContent(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     state: NotesScreenState,
     onQueryChange: (String) -> Unit,
     onNoteClick: (Note) -> Unit,
-    onNoteLongClick: (Note) -> Unit
+    onNoteLongClick: (Note) -> Unit,
+    contentPadding: PaddingValues
 ) {
     when (state) {
         NotesScreenState.Initial -> {
@@ -93,6 +113,7 @@ fun NotesContent(
         is NotesScreenState.Loaded -> {
             NotesLoadedContent(
                 modifier = modifier,
+                contentPadding = contentPadding,
                 query = state.query,
                 pinnedNotes = state.pinnedNotes,
                 otherNotes = state.otherNotes,
@@ -142,14 +163,16 @@ fun NotesLoadedContent(
     otherNotes: List<Note>,
     onQueryChange: (String) -> Unit,
     onNoteClick: (Note) -> Unit,
-    onNoteLongClick: (Note) -> Unit
+    onNoteLongClick: (Note) -> Unit,
+    contentPadding: PaddingValues
 ) {
     Column(
         modifier = modifier
     ) {
         LazyColumn(
             modifier = Modifier
-                .weight(1f)
+                .weight(1f),
+            contentPadding = contentPadding
         ) {
             item {
                 Title(
@@ -221,7 +244,7 @@ fun NotesLoadedContent(
             ) { index, note ->
                 NoteCard(
                     modifier = Modifier
-                        .widthIn(max = 160.dp)
+                        .fillMaxWidth()
                         .padding(horizontal = 24.dp),
                     note = note,
                     backgroundColor = OtherNotesColors[index % OtherNotesColors.size],
