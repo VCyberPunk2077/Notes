@@ -7,6 +7,11 @@
     <string name="others">Others</string>
     <string name="date_just_now">Just now</string>
     <string name="button_add_note">Button add note</string>
+    <string name="create_note">Create Note</string>
+    <string name="back">Back</string>
+    <string name="title">Title</string>
+    <string name="note_something_down">Note something down</string>
+    <string name="save_note">Save note</string>
     <plurals name="date_hours_ago">
         <item quantity="one">%d h ago</item>
         <item quantity="other">%d h ago</item>

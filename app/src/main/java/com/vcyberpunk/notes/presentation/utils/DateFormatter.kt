@@ -12,6 +12,10 @@ object DateFormatter {
     private val MILLIS_IN_DAY = TimeUnit.DAYS.toMillis(1)
     private val formatter = SimpleDateFormat.getDateInstance(DateFormat.SHORT)
 
+    fun formatCurrentDate(): String {
+        return formatter.format(System.currentTimeMillis())
+    }
+
     fun formatDateToString(context: Context, timestamp: Long): String {
         val now = System.currentTimeMillis()
         val diff = now - timestamp
