@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Notes</string>
+    <string name="search_icon_cd">Поиск</string>
+    <string name="search_searchbar">Поиск…</string>
+    <string name="pinned">Закреплённые</string>
+    <string name="all_notes">Все заметки</string>
+    <string name="others">Остальные</string>
+    <string name="date_just_now">Только что</string>
+    <plurals name="date_hours_ago">
+        <item quantity="one">%d час назад</item>
+        <item quantity="few">%d часа назад</item>
+        <item quantity="many">%d часов назад</item>
+        <item quantity="other">%d часа назад</item>
+    </plurals>
+    <string name="button_add_note">Кнопка добавления заметки</string>
+</resources>

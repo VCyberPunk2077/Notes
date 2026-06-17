@@ -8,10 +8,12 @@ class AddNoteUseCase(
 
     suspend operator fun invoke(
         title: String,
-        content: String
+        content: String,
     ) = repository.addNote(
         title = title,
-        content = content
+        content = content,
+        updatedAt = System.currentTimeMillis(),
+        isPinned = false
     )
 
 }
