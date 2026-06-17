@@ -19,6 +19,9 @@ class CreateNoteViewModel: ViewModel() {
 
     fun processCommand(command: CreateNoteCommand) {
         when (command) {
+            CreateNoteCommand.Init -> {
+                _state.update { CreateNoteState.Creation() }
+            }
             CreateNoteCommand.Back -> {
                 _state.update { CreateNoteState.Finished }
             }
@@ -65,6 +68,8 @@ class CreateNoteViewModel: ViewModel() {
 }
 
 sealed interface CreateNoteCommand {
+
+    data object Init : CreateNoteCommand
 
     data class InputTitle(val title: String): CreateNoteCommand
 
