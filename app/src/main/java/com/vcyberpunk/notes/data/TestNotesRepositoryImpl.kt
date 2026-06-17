@@ -25,17 +25,6 @@ object TestNotesRepositoryImpl : NotesRepository {
         }
     }
 
-    init {
-        repeat(50) {
-            addNote(
-                "title $it",
-                content = "content $it",
-                updatedAt = System.currentTimeMillis(),
-                isPinned = false,
-            )
-        }
-    }
-
     override fun deleteNote(noteId: Int) {
         notesListFlow.update { oldList ->
             oldList.toMutableList().apply {
