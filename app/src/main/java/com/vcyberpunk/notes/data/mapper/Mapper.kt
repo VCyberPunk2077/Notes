@@ -18,3 +18,7 @@ fun NoteDbModel.toEntity(): Note = Note(
     updatedAt = updatedAt,
     isPinned = isPinned
 )
+
+fun List<NoteDbModel>.toListEntity(): List<Note> = map {
+    it.toEntity()
+}
