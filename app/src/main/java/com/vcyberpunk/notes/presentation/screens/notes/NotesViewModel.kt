@@ -2,7 +2,7 @@ package com.vcyberpunk.notes.presentation.screens.notes
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vcyberpunk.notes.data.TestNotesRepositoryImpl
+import com.vcyberpunk.notes.data.repository.TestNotesRepositoryImpl
 import com.vcyberpunk.notes.domain.entity.Note
 import com.vcyberpunk.notes.domain.usecase.GetAllNotesUseCase
 import com.vcyberpunk.notes.domain.usecase.SearchNotesUseCase
