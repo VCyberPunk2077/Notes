@@ -12,6 +12,9 @@ interface NotesDao {
     @Query("SELECT * FROM notes ORDER BY updatedAt DESC")
     fun getAllNotes(): Flow<List<NoteDbModel>>
 
+    @Query("SELECT * FROM notes WHERE id == :noteId")
+    suspend fun getNote(noteId: Int): NoteDbModel
+
     @Query("SELECT * FROM notes WHERE title LIKE '%' || :query || '%' OR content LIKE '%' || :query || '%' ORDER BY updatedAt DESC")
     fun searchNotes(query: String): Flow<List<NoteDbModel>>
 
