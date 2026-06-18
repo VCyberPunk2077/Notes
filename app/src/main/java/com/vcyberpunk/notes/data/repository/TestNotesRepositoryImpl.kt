@@ -1,4 +1,4 @@
-package com.vcyberpunk.notes.data
+package com.vcyberpunk.notes.data.repository
 
 import com.vcyberpunk.notes.domain.entity.Note
 import com.vcyberpunk.notes.domain.repository.NotesRepository

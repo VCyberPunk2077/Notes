@@ -2,7 +2,7 @@ package com.vcyberpunk.notes.presentation.screens.creation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vcyberpunk.notes.data.TestNotesRepositoryImpl
+import com.vcyberpunk.notes.data.repository.TestNotesRepositoryImpl
 import com.vcyberpunk.notes.domain.usecase.AddNoteUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
