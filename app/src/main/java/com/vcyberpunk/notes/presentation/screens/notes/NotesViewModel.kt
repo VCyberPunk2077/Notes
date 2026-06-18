@@ -1,8 +1,9 @@
 package com.vcyberpunk.notes.presentation.screens.notes
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vcyberpunk.notes.data.repository.TestNotesRepositoryImpl
+import com.vcyberpunk.notes.data.repository.NotesRepositoryImpl
 import com.vcyberpunk.notes.domain.entity.Note
 import com.vcyberpunk.notes.domain.usecase.GetAllNotesUseCase
 import com.vcyberpunk.notes.domain.usecase.SearchNotesUseCase
@@ -20,9 +21,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class NotesViewModel : ViewModel() {
+class NotesViewModel(context: Context) : ViewModel() {
 
-    private val repository = TestNotesRepositoryImpl
+    private val repository = NotesRepositoryImpl.getInstance(context)
     private val getAllNotesUseCase = GetAllNotesUseCase(repository)
     private val searchNotesUseCase = SearchNotesUseCase(repository)
     private val switchPinnedStatusUseCase = SwitchPinnedStatusUseCase(repository)
