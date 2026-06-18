@@ -14,9 +14,11 @@
         <item quantity="other">%d часа назад</item>
     </plurals>
     <string name="button_add_note">Кнопка добавления заметки</string>
-    <string name="create_note">Создай заметку</string>
+    <string name="create_note">Создание заметки</string>
     <string name="back">Назад</string>
     <string name="title">Заголовок</string>
     <string name="note_something_down">Напишите что-нибудь ниже</string>
     <string name="save_note">Сохранить заметку</string>
+    <string name="edit_note">Редактирование заметки</string>
+    <string name="delete_note">Удалить заметку</string>
 </resources>

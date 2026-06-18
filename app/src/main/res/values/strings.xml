@@ -12,6 +12,8 @@
     <string name="title">Title</string>
     <string name="note_something_down">Note something down</string>
     <string name="save_note">Save note</string>
+    <string name="edit_note">Edit Note</string>
+    <string name="delete_note">Delete note</string>
     <plurals name="date_hours_ago">
         <item quantity="one">%d h ago</item>
         <item quantity="other">%d h ago</item>
