@@ -2,8 +2,9 @@ package com.vcyberpunk.notes.domain.usecase
 
 import com.vcyberpunk.notes.domain.entity.Note
 import com.vcyberpunk.notes.domain.repository.NotesRepository
+import javax.inject.Inject
 
-class EditNoteUseCase(
+class EditNoteUseCase @Inject constructor(
     private val repository: NotesRepository
 ) {
 

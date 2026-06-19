@@ -1,7 +1,6 @@
 package com.vcyberpunk.notes.data.repository
 
-import android.content.Context
-import com.vcyberpunk.notes.data.local.db.NotesDatabase
+import com.vcyberpunk.notes.data.local.db.NotesDao
 import com.vcyberpunk.notes.data.local.entity.NoteDbModel
 import com.vcyberpunk.notes.data.mapper.toDbModel
 import com.vcyberpunk.notes.data.mapper.toEntity
@@ -10,13 +9,11 @@ import com.vcyberpunk.notes.domain.entity.Note
 import com.vcyberpunk.notes.domain.repository.NotesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class NotesRepositoryImpl private constructor(
-    context: Context
+class NotesRepositoryImpl @Inject constructor(
+    private val notesDao: NotesDao
 ) : NotesRepository {
-
-    private val notesDatabase = NotesDatabase.getInstance(context)
-    private val notesDao = notesDatabase.notesDao()
 
     override suspend fun addNote(
         title: String,
@@ -54,24 +51,7 @@ class NotesRepositoryImpl private constructor(
     }
 
     companion object {
-
         private const val UNDEFINED_ID = 0
-
-        private val LOCK = Any()
-        private var INSTANCE: NotesRepositoryImpl? = null
-
-        fun getInstance(context: Context): NotesRepositoryImpl {
-            INSTANCE?.let { return it }
-            synchronized(LOCK) {
-                INSTANCE?.let { return it }
-                val repository = NotesRepositoryImpl(
-                    context = context
-                )
-                return repository.apply {
-                    INSTANCE = this
-                }
-            }
-        }
 
     }
 }
