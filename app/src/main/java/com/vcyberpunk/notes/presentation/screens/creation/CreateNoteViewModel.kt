@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vcyberpunk.notes.data.repository.NotesRepositoryImpl
 import com.vcyberpunk.notes.domain.usecase.AddNoteUseCase
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -18,10 +20,15 @@ class CreateNoteViewModel(context: Context): ViewModel() {
     private val _state = MutableStateFlow<CreateNoteState>(CreateNoteState.Creation())
     val state = _state.asStateFlow()
 
+    private val _events = MutableSharedFlow<CreateNoteEvent>()
+    val events = _events.asSharedFlow()
+
     fun processCommand(command: CreateNoteCommand) {
         when (command) {
             CreateNoteCommand.Back -> {
-                _state.update { CreateNoteState.Finished }
+                viewModelScope.launch {
+                    _events.emit(CreateNoteEvent.NavigateBack)
+                }
             }
             is CreateNoteCommand.InputContent -> {
                 _state.update { prevState ->
@@ -57,7 +64,7 @@ class CreateNoteViewModel(context: Context): ViewModel() {
                             content = currentState.content
                         )
 
-                        _state.update { CreateNoteState.Finished }
+                        _events.emit(CreateNoteEvent.NavigateBack)
                     }
                 }
             }
@@ -85,6 +92,10 @@ sealed interface CreateNoteState {
         val isSaveEnabled: Boolean = false
     ): CreateNoteState
 
-    data object Finished: CreateNoteState
+}
+
+sealed interface CreateNoteEvent {
+
+    data object NavigateBack: CreateNoteEvent
 
 }

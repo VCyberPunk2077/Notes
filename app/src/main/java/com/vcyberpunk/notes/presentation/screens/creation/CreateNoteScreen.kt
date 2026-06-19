@@ -45,6 +45,13 @@ fun CreateNoteScreen(
     onFinished: () -> Unit
 ) {
     val state = viewModel.state.collectAsState()
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                CreateNoteEvent.NavigateBack -> onFinished()
+            }
+        }
+    }
     when (val currentState = state.value) {
         is CreateNoteState.Creation -> {
             Scaffold(
@@ -162,12 +169,6 @@ fun CreateNoteScreen(
                         )
                     }
                 }
-            }
-        }
-
-        CreateNoteState.Finished -> {
-            LaunchedEffect(Unit) {
-                onFinished()
             }
         }
     }
