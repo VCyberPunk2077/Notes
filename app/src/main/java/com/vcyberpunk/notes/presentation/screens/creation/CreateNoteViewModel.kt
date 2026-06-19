@@ -35,7 +35,6 @@ class CreateNoteViewModel(context: Context): ViewModel() {
                     if (prevState is CreateNoteState.Creation) {
                         prevState.copy(
                             content = command.content,
-                            isSaveEnabled = prevState.title.isNotBlank() && command.content.isNotBlank()
                         )
                     } else {
                         CreateNoteState.Creation(content = command.content)
@@ -47,7 +46,6 @@ class CreateNoteViewModel(context: Context): ViewModel() {
                     if (prevState is CreateNoteState.Creation) {
                         prevState.copy(
                             title = command.title,
-                            isSaveEnabled = prevState.content.isNotBlank() && command.title.isNotBlank()
                         )
                     } else {
                         CreateNoteState.Creation(title = command.title)
@@ -89,8 +87,10 @@ sealed interface CreateNoteState {
     data class Creation(
         val title: String = "",
         val content: String = "",
-        val isSaveEnabled: Boolean = false
-    ): CreateNoteState
+    ): CreateNoteState {
+        val isSaveEnabled: Boolean
+            get() = title.isNotBlank() && content.isNotBlank()
+    }
 
 }
 
