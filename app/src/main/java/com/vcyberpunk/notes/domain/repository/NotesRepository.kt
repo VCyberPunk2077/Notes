@@ -1,11 +1,12 @@
 package com.vcyberpunk.notes.domain.repository
 
+import com.vcyberpunk.notes.domain.entity.ContentItem
 import com.vcyberpunk.notes.domain.entity.Note
 import kotlinx.coroutines.flow.Flow
 
 interface NotesRepository {
 
-    suspend fun addNote(title: String, content: String, updatedAt: Long, isPinned: Boolean)
+    suspend fun addNote(title: String, content: List<ContentItem>, updatedAt: Long, isPinned: Boolean)
 
     suspend fun deleteNote(noteId: Int)
 
