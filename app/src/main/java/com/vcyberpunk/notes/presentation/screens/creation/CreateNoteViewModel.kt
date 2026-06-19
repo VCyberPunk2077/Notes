@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vcyberpunk.notes.data.repository.NotesRepositoryImpl
 import com.vcyberpunk.notes.domain.usecase.AddNoteUseCase
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -15,23 +17,24 @@ class CreateNoteViewModel(context: Context): ViewModel() {
     private val repository = NotesRepositoryImpl.getInstance(context)
     private val addNoteUseCase = AddNoteUseCase(repository)
 
-    private val _state = MutableStateFlow<CreateNoteState>(CreateNoteState.Initial)
+    private val _state = MutableStateFlow<CreateNoteState>(CreateNoteState.Creation())
     val state = _state.asStateFlow()
+
+    private val _events = MutableSharedFlow<CreateNoteEvent>()
+    val events = _events.asSharedFlow()
 
     fun processCommand(command: CreateNoteCommand) {
         when (command) {
-            CreateNoteCommand.Init -> {
-                _state.update { CreateNoteState.Creation() }
-            }
             CreateNoteCommand.Back -> {
-                _state.update { CreateNoteState.Finished }
+                viewModelScope.launch {
+                    _events.emit(CreateNoteEvent.NavigateBack)
+                }
             }
             is CreateNoteCommand.InputContent -> {
                 _state.update { prevState ->
                     if (prevState is CreateNoteState.Creation) {
                         prevState.copy(
                             content = command.content,
-                            isSaveEnabled = prevState.title.isNotBlank() && command.content.isNotBlank()
                         )
                     } else {
                         CreateNoteState.Creation(content = command.content)
@@ -43,7 +46,6 @@ class CreateNoteViewModel(context: Context): ViewModel() {
                     if (prevState is CreateNoteState.Creation) {
                         prevState.copy(
                             title = command.title,
-                            isSaveEnabled = prevState.content.isNotBlank() && command.title.isNotBlank()
                         )
                     } else {
                         CreateNoteState.Creation(title = command.title)
@@ -60,7 +62,7 @@ class CreateNoteViewModel(context: Context): ViewModel() {
                             content = currentState.content
                         )
 
-                        _state.update { CreateNoteState.Finished }
+                        _events.emit(CreateNoteEvent.NavigateBack)
                     }
                 }
             }
@@ -69,8 +71,6 @@ class CreateNoteViewModel(context: Context): ViewModel() {
 }
 
 sealed interface CreateNoteCommand {
-
-    data object Init : CreateNoteCommand
 
     data class InputTitle(val title: String): CreateNoteCommand
 
@@ -84,14 +84,18 @@ sealed interface CreateNoteCommand {
 
 sealed interface CreateNoteState {
 
-    data object Initial: CreateNoteState
-
     data class Creation(
         val title: String = "",
         val content: String = "",
-        val isSaveEnabled: Boolean = false
-    ): CreateNoteState
+    ): CreateNoteState {
+        val isSaveEnabled: Boolean
+            get() = title.isNotBlank() && content.isNotBlank()
+    }
 
-    data object Finished: CreateNoteState
+}
+
+sealed interface CreateNoteEvent {
+
+    data object NavigateBack: CreateNoteEvent
 
 }
