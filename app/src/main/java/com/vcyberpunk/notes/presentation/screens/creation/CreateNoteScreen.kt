@@ -46,12 +46,6 @@ fun CreateNoteScreen(
 ) {
     val state = viewModel.state.collectAsState()
     when (val currentState = state.value) {
-        CreateNoteState.Initial -> {
-            LaunchedEffect(Unit) {
-                viewModel.processCommand(CreateNoteCommand.Init)
-            }
-        }
-
         is CreateNoteState.Creation -> {
             Scaffold(
                 modifier = modifier,

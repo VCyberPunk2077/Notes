@@ -15,14 +15,11 @@ class CreateNoteViewModel(context: Context): ViewModel() {
     private val repository = NotesRepositoryImpl.getInstance(context)
     private val addNoteUseCase = AddNoteUseCase(repository)
 
-    private val _state = MutableStateFlow<CreateNoteState>(CreateNoteState.Initial)
+    private val _state = MutableStateFlow<CreateNoteState>(CreateNoteState.Creation())
     val state = _state.asStateFlow()
 
     fun processCommand(command: CreateNoteCommand) {
         when (command) {
-            CreateNoteCommand.Init -> {
-                _state.update { CreateNoteState.Creation() }
-            }
             CreateNoteCommand.Back -> {
                 _state.update { CreateNoteState.Finished }
             }
@@ -70,8 +67,6 @@ class CreateNoteViewModel(context: Context): ViewModel() {
 
 sealed interface CreateNoteCommand {
 
-    data object Init : CreateNoteCommand
-
     data class InputTitle(val title: String): CreateNoteCommand
 
     data class InputContent(val content: String): CreateNoteCommand
@@ -83,8 +78,6 @@ sealed interface CreateNoteCommand {
 }
 
 sealed interface CreateNoteState {
-
-    data object Initial: CreateNoteState
 
     data class Creation(
         val title: String = "",
