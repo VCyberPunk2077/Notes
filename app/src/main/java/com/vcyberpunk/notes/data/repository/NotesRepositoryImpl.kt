@@ -25,7 +25,7 @@ class NotesRepositoryImpl private constructor(
         isPinned: Boolean
     ) {
         val noteDbModel = NoteDbModel(
-            id = 0,
+            id = UNDEFINED_ID,
             title = title,
             content = content,
             updatedAt = updatedAt,
@@ -54,6 +54,8 @@ class NotesRepositoryImpl private constructor(
     }
 
     companion object {
+
+        private const val UNDEFINED_ID = 0
 
         private val LOCK = Any()
         private var INSTANCE: NotesRepositoryImpl? = null
