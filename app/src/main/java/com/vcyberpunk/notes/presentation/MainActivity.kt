@@ -10,7 +10,9 @@ import com.vcyberpunk.notes.presentation.screens.creation.CreateNoteScreen
 import com.vcyberpunk.notes.presentation.screens.editing.EditNoteScreen
 import com.vcyberpunk.notes.presentation.screens.notes.NotesScreen
 import com.vcyberpunk.notes.presentation.theme.NotesTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

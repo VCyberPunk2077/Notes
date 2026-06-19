@@ -1,13 +1,12 @@
 package com.vcyberpunk.notes.presentation.screens.notes
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vcyberpunk.notes.data.repository.NotesRepositoryImpl
 import com.vcyberpunk.notes.domain.entity.Note
 import com.vcyberpunk.notes.domain.usecase.GetAllNotesUseCase
 import com.vcyberpunk.notes.domain.usecase.SearchNotesUseCase
 import com.vcyberpunk.notes.domain.usecase.SwitchPinnedStatusUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,14 +17,15 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class NotesViewModel(context: Context) : ViewModel() {
-
-    private val repository = NotesRepositoryImpl.getInstance(context)
-    private val getAllNotesUseCase = GetAllNotesUseCase(repository)
-    private val searchNotesUseCase = SearchNotesUseCase(repository)
-    private val switchPinnedStatusUseCase = SwitchPinnedStatusUseCase(repository)
+@HiltViewModel
+class NotesViewModel @Inject constructor(
+    private val getAllNotesUseCase: GetAllNotesUseCase,
+    private val searchNotesUseCase: SearchNotesUseCase,
+    private val switchPinnedStatusUseCase: SwitchPinnedStatusUseCase
+) : ViewModel() {
 
     private val query = MutableStateFlow("")
 

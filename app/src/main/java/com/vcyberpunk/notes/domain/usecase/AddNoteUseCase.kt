@@ -1,8 +1,9 @@
 package com.vcyberpunk.notes.domain.usecase
 
 import com.vcyberpunk.notes.domain.repository.NotesRepository
+import javax.inject.Inject
 
-class AddNoteUseCase(
+class AddNoteUseCase @Inject constructor(
     private val repository: NotesRepository
 ) {
 

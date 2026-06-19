@@ -1,6 +1,5 @@
 package com.vcyberpunk.notes.presentation.screens.editing
 
-import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,8 +29,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vcyberpunk.notes.R
 import com.vcyberpunk.notes.presentation.utils.DateFormatter
 
@@ -39,10 +38,9 @@ import com.vcyberpunk.notes.presentation.utils.DateFormatter
 @Composable
 fun EditNoteScreen(
     modifier: Modifier = Modifier,
-    context: Context = LocalContext.current.applicationContext,
     noteId: Int,
-    viewModel: EditNoteViewModel = viewModel {
-        EditNoteViewModel(context = context, noteId = noteId)
+    viewModel: EditNoteViewModel = hiltViewModel { factory: EditNoteViewModel.Factory ->
+        factory.create(noteId = noteId)
     },
     onFinished: () -> Unit
 ) {
