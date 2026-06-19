@@ -10,7 +10,9 @@ import com.vcyberpunk.notes.domain.usecase.EditNoteUseCase
 import com.vcyberpunk.notes.domain.usecase.GetNoteUseCase
 import com.vcyberpunk.notes.presentation.screens.editing.EditNoteState.Editing
 import com.vcyberpunk.notes.presentation.screens.editing.EditNoteState.Initial
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -25,6 +27,9 @@ class EditNoteViewModel(context: Context, private val noteId: Int) : ViewModel()
     private val _state = MutableStateFlow<EditNoteState>(Initial)
     val state = _state.asStateFlow()
 
+    private val _events = MutableSharedFlow<EditNoteEvent>()
+    val events = _events.asSharedFlow()
+
     fun processCommand(command: EditNoteCommand) {
         when (command) {
             EditNoteCommand.Init -> {
@@ -38,7 +43,9 @@ class EditNoteViewModel(context: Context, private val noteId: Int) : ViewModel()
             }
 
             EditNoteCommand.Back -> {
-                _state.update { EditNoteState.Finished }
+                viewModelScope.launch {
+                    _events.emit(EditNoteEvent.NavigateBack)
+                }
             }
 
             is EditNoteCommand.InputContent -> {
@@ -70,7 +77,7 @@ class EditNoteViewModel(context: Context, private val noteId: Int) : ViewModel()
                     if (currentState is Editing) {
                         val note = currentState.note
                         editNoteUseCase(note = note)
-                        _state.update { EditNoteState.Finished }
+                        _events.emit(EditNoteEvent.NavigateBack)
                     }
                 }
             }
@@ -82,7 +89,7 @@ class EditNoteViewModel(context: Context, private val noteId: Int) : ViewModel()
                     if (currentState is Editing) {
                         val note = currentState.note
                         deleteNoteUseCase(noteId = note.id)
-                        _state.update { EditNoteState.Finished }
+                        _events.emit(EditNoteEvent.NavigateBack)
                     }
                 }
             }
@@ -113,12 +120,14 @@ sealed interface EditNoteState {
     data class Editing(
         val note: Note
     ) : EditNoteState {
-
         val isSaveEnabled: Boolean
             get() = note.title.isNotBlank() && note.content.isNotBlank()
-
     }
 
-    data object Finished : EditNoteState
+}
+
+sealed interface EditNoteEvent {
+
+    data object NavigateBack : EditNoteEvent
 
 }

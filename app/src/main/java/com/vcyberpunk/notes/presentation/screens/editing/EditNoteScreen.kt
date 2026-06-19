@@ -47,6 +47,14 @@ fun EditNoteScreen(
     onFinished: () -> Unit
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                EditNoteEvent.NavigateBack -> onFinished()
+            }
+        }
+    }
+
     when (val currentState = state.value) {
         EditNoteState.Initial -> {
             LaunchedEffect(Unit) {
@@ -185,12 +193,6 @@ fun EditNoteScreen(
                         )
                     }
                 }
-            }
-        }
-
-        EditNoteState.Finished -> {
-            LaunchedEffect(Unit) {
-                onFinished()
             }
         }
     }
