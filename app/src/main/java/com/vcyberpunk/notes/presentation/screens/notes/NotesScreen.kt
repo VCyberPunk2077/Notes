@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -20,7 +19,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -104,16 +102,6 @@ fun NotesContent(
 
         }
 
-        is NotesScreenState.Loading -> {
-            NotesLoadingContent(
-                modifier = modifier,
-                query = state.query,
-                onQueryChange = { query ->
-                    onQueryChange(query)
-                },
-            )
-        }
-
         is NotesScreenState.Loaded -> {
             NotesLoadedContent(
                 modifier = modifier,
@@ -133,30 +121,6 @@ fun NotesContent(
             )
         }
     }
-}
-
-@Composable
-fun NotesLoadingContent(
-    modifier: Modifier,
-    query: String,
-    onQueryChange: (String) -> Unit
-) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Title(
-            modifier = Modifier.padding(vertical = 24.dp),
-            text = stringResource(R.string.all_notes)
-        )
-        SearchBar(
-            query = query,
-            onQueryChange = {
-                onQueryChange(it)
-            }
-        )
-    }
-    CircularProgressIndicator(modifier = modifier)
 }
 
 @Composable

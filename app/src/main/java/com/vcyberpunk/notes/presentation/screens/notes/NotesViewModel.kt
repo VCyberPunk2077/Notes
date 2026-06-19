@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -38,7 +37,8 @@ class NotesViewModel(context: Context) : ViewModel() {
             .distinctUntilChanged {old, new ->
                 old == new
             }
-            .flatMapLatest { query ->
+            .flatMapLatest { rawQuery ->
+                val query = rawQuery.trim()
                 val notesFlow = if (query.isBlank()) {
                     getAllNotesUseCase()
                 } else {
@@ -54,13 +54,6 @@ class NotesViewModel(context: Context) : ViewModel() {
                             otherNotes = otherNotes
                         )
                     }
-                    .onStart {
-                        emit(
-                            NotesScreenState.Loading(
-                                query = query
-                            )
-                        )
-                    }
             }
             .onEach { notesScreenState ->
                 _state.value = notesScreenState
@@ -72,7 +65,7 @@ class NotesViewModel(context: Context) : ViewModel() {
         when (command) {
             is NotesCommand.InputSearchQuery -> {
                 query.update {
-                    command.query.trim()
+                    command.query
                 }
             }
 
@@ -102,10 +95,6 @@ sealed interface NotesCommand {
 sealed interface NotesScreenState {
 
     data object Initial : NotesScreenState
-
-    data class Loading(
-        val query: String
-    ) : NotesScreenState
 
     data class Loaded(
         val query: String,
