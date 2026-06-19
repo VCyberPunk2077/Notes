@@ -4,9 +4,11 @@ import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,6 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -99,7 +103,12 @@ fun NotesContent(
 ) {
     when (state) {
         NotesScreenState.Initial -> {
-
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
         }
 
         is NotesScreenState.Loaded -> {
@@ -109,15 +118,9 @@ fun NotesContent(
                 query = state.query,
                 pinnedNotes = state.pinnedNotes,
                 otherNotes = state.otherNotes,
-                onQueryChange = { query ->
-                    onQueryChange(query)
-                },
-                onNoteClick = { note ->
-                    onNoteClick(note)
-                },
-                onNoteLongClick = { note ->
-                    onNoteLongClick(note)
-                }
+                onQueryChange = onQueryChange,
+                onNoteClick = onNoteClick,
+                onNoteLongClick = onNoteLongClick
             )
         }
     }
@@ -156,9 +159,7 @@ fun NotesLoadedContent(
             item {
                 SearchBar(
                     query = query,
-                    onQueryChange = {
-                        onQueryChange(it)
-                    }
+                    onQueryChange = onQueryChange
                 )
             }
             item {
@@ -187,8 +188,8 @@ fun NotesLoadedContent(
                             modifier = Modifier.widthIn(max = 160.dp),
                             note = note,
                             backgroundColor = PinnedNotesColors[index % PinnedNotesColors.size],
-                            onClick = { onNoteClick(it) },
-                            onLongClick = { onNoteLongClick(it) }
+                            onClick = onNoteClick,
+                            onLongClick = onNoteLongClick
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                     }
@@ -216,8 +217,8 @@ fun NotesLoadedContent(
                         .padding(horizontal = 24.dp),
                     note = note,
                     backgroundColor = OtherNotesColors[index % OtherNotesColors.size],
-                    onClick = { onNoteClick(it) },
-                    onLongClick = { onNoteLongClick(it) }
+                    onClick = onNoteClick,
+                    onLongClick = onNoteLongClick
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -255,6 +256,7 @@ private fun SearchBar(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 shape = RoundedCornerShape(10.dp)
             ),
+        singleLine = true,
         value = query,
         onValueChange = onQueryChange,
         placeholder = {
