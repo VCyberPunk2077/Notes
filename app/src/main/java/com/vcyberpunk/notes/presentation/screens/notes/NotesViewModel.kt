@@ -10,12 +10,12 @@ import com.vcyberpunk.notes.domain.usecase.SearchNotesUseCase
 import com.vcyberpunk.notes.domain.usecase.SwitchPinnedStatusUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -29,37 +29,36 @@ class NotesViewModel(context: Context) : ViewModel() {
 
     private val query = MutableStateFlow("")
 
-    private val _state = MutableStateFlow<NotesScreenState>(NotesScreenState.Initial)
-    val state = _state.asStateFlow()
+    private val notes = query
+        .map { it.trim() }
+        .distinctUntilChanged()
+        .flatMapLatest { searchQuery ->
+            if (searchQuery.isBlank()) {
+                getAllNotesUseCase()
+            } else {
+                searchNotesUseCase(searchQuery)
+            }
+        }
 
-    init {
-        query
-            .distinctUntilChanged {old, new ->
-                old == new
-            }
-            .flatMapLatest { rawQuery ->
-                val query = rawQuery.trim()
-                val notesFlow = if (query.isBlank()) {
-                    getAllNotesUseCase()
-                } else {
-                    searchNotesUseCase(query)
-                }
-
-                notesFlow
-                    .map<List<Note>, NotesScreenState> { notes ->
-                        val (pinnedNotes, otherNotes) = notes.partition { it.isPinned }
-                        NotesScreenState.Loaded(
-                            query = query,
-                            pinnedNotes = pinnedNotes,
-                            otherNotes = otherNotes
-                        )
-                    }
-            }
-            .onEach { notesScreenState ->
-                _state.value = notesScreenState
-            }
-            .launchIn(viewModelScope)
-    }
+    val state = combine(
+        query,
+        notes
+    ) { rawQuery, notes ->
+        val (pinnedNotes, otherNotes) = notes.partition { it.isPinned }
+        NotesScreenState.Loaded(
+            query = rawQuery,
+            pinnedNotes = pinnedNotes,
+            otherNotes = otherNotes
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = NotesScreenState.Loaded(
+            query = "",
+            pinnedNotes = emptyList(),
+            otherNotes = emptyList()
+        )
+    )
 
     fun processCommand(command: NotesCommand) {
         when (command) {
