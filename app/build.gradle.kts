@@ -47,6 +47,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.room.runtime)
