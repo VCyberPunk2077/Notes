@@ -1,10 +1,10 @@
 package com.vcyberpunk.notes.data.repository
 
 import com.vcyberpunk.notes.data.local.db.NotesDao
-import com.vcyberpunk.notes.data.local.entity.NoteDbModel
 import com.vcyberpunk.notes.data.mapper.toDbModel
 import com.vcyberpunk.notes.data.mapper.toEntity
 import com.vcyberpunk.notes.data.mapper.toListEntity
+import com.vcyberpunk.notes.domain.entity.ContentItem
 import com.vcyberpunk.notes.domain.entity.Note
 import com.vcyberpunk.notes.domain.repository.NotesRepository
 import kotlinx.coroutines.flow.Flow
@@ -17,17 +17,18 @@ class NotesRepositoryImpl @Inject constructor(
 
     override suspend fun addNote(
         title: String,
-        content: String,
+        content: List<ContentItem>,
         updatedAt: Long,
         isPinned: Boolean
     ) {
-        val noteDbModel = NoteDbModel(
+        val note = Note(
             id = UNDEFINED_ID,
             title = title,
             content = content,
             updatedAt = updatedAt,
             isPinned = isPinned
         )
+        val noteDbModel = note.toDbModel()
         notesDao.addNote(noteDbModel)
     }
 
