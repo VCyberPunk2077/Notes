@@ -2,6 +2,7 @@ package com.vcyberpunk.notes.presentation.screens.editing
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vcyberpunk.notes.domain.entity.ContentItem
 import com.vcyberpunk.notes.domain.entity.Note
 import com.vcyberpunk.notes.domain.usecase.DeleteNoteUseCase
 import com.vcyberpunk.notes.domain.usecase.EditNoteUseCase
@@ -54,7 +55,8 @@ class EditNoteViewModel @AssistedInject constructor(
             is EditNoteCommand.InputContent -> {
                 _state.update { prevState ->
                     if (prevState is Editing) {
-                        val newNote = prevState.note.copy(content = command.content)
+                        val newContent = listOf(ContentItem.Text(command.content))
+                        val newNote = prevState.note.copy(content = newContent)
                         prevState.copy(note = newNote)
                     } else {
                         prevState
@@ -133,7 +135,17 @@ sealed interface EditNoteState {
         val note: Note
     ) : EditNoteState {
         val isSaveEnabled: Boolean
-            get() = note.title.isNotBlank() && note.content.isNotBlank()
+            get() {
+                return when {
+                    note.title.isBlank() -> false
+                    note.content.isEmpty() -> false
+                    else -> {
+                        note.content.any {
+                            it !is ContentItem.Text || it.text.isNotBlank()
+                        }
+                    }
+                }
+            }
     }
 
 }

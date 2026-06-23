@@ -2,6 +2,7 @@ package com.vcyberpunk.notes.presentation.screens.creation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vcyberpunk.notes.domain.entity.ContentItem
 import com.vcyberpunk.notes.domain.usecase.AddNoteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -57,11 +58,11 @@ class CreateNoteViewModel @Inject constructor(
                     val currentState = _state.value
 
                     if (currentState is CreateNoteState.Creation) {
+                        val content = currentState.content
                         addNoteUseCase(
                             title = currentState.title,
-                            content = currentState.content
+                            content = listOf(ContentItem.Text(text = content))
                         )
-
                         _events.emit(CreateNoteEvent.NavigateBack)
                     }
                 }
