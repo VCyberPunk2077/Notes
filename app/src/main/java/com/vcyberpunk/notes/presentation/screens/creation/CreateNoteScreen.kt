@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -34,7 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vcyberpunk.notes.R
-import com.vcyberpunk.notes.domain.entity.ContentItem
+import com.vcyberpunk.notes.presentation.theme.Content
 import com.vcyberpunk.notes.presentation.utils.DateFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -142,36 +141,21 @@ fun CreateNoteScreen(
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    LazyColumn(
-                        modifier = Modifier
-                            .weight(1f)
-                    ) {
-                        currentState.content.forEachIndexed { index, contentItem ->
-                            item(key = index) {
-                                when (contentItem) {
-                                    is ContentItem.Image -> {
-                                        TextContent(
-                                            text = contentItem.url,
-                                            onTextChange = {}
-                                        )
-                                    }
-                                    is ContentItem.Text -> {
-                                        TextContent(
-                                            text = contentItem.text,
-                                            onTextChange = {
-                                                viewModel.processCommand(
-                                                    CreateNoteCommand.InputContent(
-                                                        content = it,
-                                                        index = index
-                                                    )
-                                                )
-                                            }
-                                        )
-                                    }
-                                }
-                            }
+                    Content(
+                        modifier = Modifier.weight(1f),
+                        content = currentState.content,
+                        onDeleteImageClick = { index ->
+                            viewModel.processCommand(CreateNoteCommand.DeleteImage(
+                                index = index
+                            ))
+                        },
+                        onInputContent = { index, text ->
+                            viewModel.processCommand(CreateNoteCommand.InputContent(
+                                content = text,
+                                index = index
+                            ))
                         }
-                    }
+                    )
                     Button(
                         modifier = Modifier
                             .padding(horizontal = 24.dp)
@@ -198,34 +182,3 @@ fun CreateNoteScreen(
     }
 }
 
-@Composable
-private fun TextContent(
-    modifier: Modifier = Modifier,
-    text: String,
-    onTextChange: (String) -> Unit
-) {
-    TextField(
-        modifier = modifier
-            .padding(horizontal = 8.dp)
-            .fillMaxWidth(),
-        value = text,
-        onValueChange = onTextChange,
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
-        ),
-        textStyle = TextStyle(
-            fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.onSurface
-        ),
-        placeholder = {
-            Text(
-                text = stringResource(R.string.note_something_down),
-                fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
-            )
-        }
-    )
-}

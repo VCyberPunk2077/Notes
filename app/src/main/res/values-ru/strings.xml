@@ -22,4 +22,6 @@
     <string name="edit_note">Редактирование заметки</string>
     <string name="delete_note">Удалить заметку</string>
     <string name="add_image">Добавить изображение из галереи</string>
+    <string name="image_from_gallery">Изображение из галереи</string>
+    <string name="remove_image">Удалить изображение</string>
 </resources>
