@@ -1,5 +1,7 @@
 package com.vcyberpunk.notes.presentation.screens.creation
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -7,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.AddPhotoAlternate
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vcyberpunk.notes.R
+import com.vcyberpunk.notes.presentation.theme.Content
 import com.vcyberpunk.notes.presentation.utils.DateFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,6 +44,15 @@ fun CreateNoteScreen(
     onFinished: () -> Unit
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
+
+    val imagePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let {
+            viewModel.processCommand(CreateNoteCommand.AddImage(it))
+        }
+    }
+
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
@@ -72,9 +85,21 @@ fun CreateNoteScreen(
                                 contentDescription = stringResource(R.string.back)
                             )
                         },
+                        actions = {
+                            Icon(
+                                modifier = Modifier
+                                    .padding(end = 24.dp)
+                                    .clickable {
+                                        imagePicker.launch("image/*")
+                                    },
+                                imageVector = Icons.Outlined.AddPhotoAlternate,
+                                contentDescription = stringResource(R.string.add_image)
+                            )
+                        },
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = Color.Transparent,
-                            navigationIconContentColor = MaterialTheme.colorScheme.onSurface
+                            navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
+                            actionIconContentColor = MaterialTheme.colorScheme.onSurface
                         )
                     )
                 }
@@ -116,31 +141,19 @@ fun CreateNoteScreen(
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    TextField(
-                        modifier = Modifier
-                            .padding(horizontal = 8.dp)
-                            .fillMaxWidth()
-                            .weight(1f),
-                        value = currentState.content,
-                        onValueChange = { content ->
-                            viewModel.processCommand(CreateNoteCommand.InputContent(content))
+                    Content(
+                        modifier = Modifier.weight(1f),
+                        content = currentState.content,
+                        onDeleteImageClick = { index ->
+                            viewModel.processCommand(CreateNoteCommand.DeleteImage(
+                                index = index
+                            ))
                         },
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
-                        ),
-                        textStyle = TextStyle(
-                            fontSize = 16.sp,
-                            color = MaterialTheme.colorScheme.onSurface
-                        ),
-                        placeholder = {
-                            Text(
-                                text = stringResource(R.string.note_something_down),
-                                fontSize = 16.sp,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
-                            )
+                        onInputContent = { index, text ->
+                            viewModel.processCommand(CreateNoteCommand.InputContent(
+                                content = text,
+                                index = index
+                            ))
                         }
                     )
                     Button(
@@ -168,3 +181,4 @@ fun CreateNoteScreen(
         }
     }
 }
+
