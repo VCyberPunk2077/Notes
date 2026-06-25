@@ -1,14 +1,30 @@
 package com.vcyberpunk.notes.data.local.entity
 
-import kotlinx.serialization.Serializable
+import androidx.room.Entity
+import androidx.room.ForeignKey
 
-@Serializable
-sealed interface ContentItemDbModel {
+@Entity(
+    tableName = "content",
+    primaryKeys = ["noteId", "order"],
+    foreignKeys = [
+        ForeignKey(
+            entity = NoteDbModel::class,
+            parentColumns = ["id"],
+            childColumns = ["noteId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
+data class ContentItemDbModel(
+    val noteId: Int,
+    val type: ContentType,
+    val content: String,
+    val order: Int
+)
 
-    @Serializable
-    data class Text(val text: String): ContentItemDbModel
 
-    @Serializable
-    data class Image(val url: String): ContentItemDbModel
+enum class ContentType {
+
+    TEXT, IMAGE
 
 }

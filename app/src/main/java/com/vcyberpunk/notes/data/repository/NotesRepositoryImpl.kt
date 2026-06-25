@@ -2,8 +2,10 @@ package com.vcyberpunk.notes.data.repository
 
 import com.vcyberpunk.notes.data.local.ImageFileManager
 import com.vcyberpunk.notes.data.local.db.NotesDao
+import com.vcyberpunk.notes.data.local.entity.NoteDbModel
 import com.vcyberpunk.notes.data.mapper.toDbModel
 import com.vcyberpunk.notes.data.mapper.toEntity
+import com.vcyberpunk.notes.data.mapper.toListContentItemDbModel
 import com.vcyberpunk.notes.data.mapper.toListEntity
 import com.vcyberpunk.notes.domain.entity.ContentItem
 import com.vcyberpunk.notes.domain.entity.Note
@@ -23,15 +25,14 @@ class NotesRepositoryImpl @Inject constructor(
         updatedAt: Long,
         isPinned: Boolean
     ) {
-        val note = Note(
+        val processedContent = content.processedForStorage()
+        val noteDbModel = NoteDbModel(
             id = UNDEFINED_ID,
             title = title,
-            content = content.processedForStorage(),
             updatedAt = updatedAt,
             isPinned = isPinned
         )
-        val noteDbModel = note.toDbModel()
-        notesDao.addNote(noteDbModel)
+        notesDao.addNoteWithContent(noteDbModel, processedContent)
     }
 
     override suspend fun deleteNote(noteId: Int) {
@@ -63,7 +64,10 @@ class NotesRepositoryImpl @Inject constructor(
         val processedContent = note.content.processedForStorage()
         val processedNote = note.copy(content = processedContent)
 
-        notesDao.addNote(processedNote.toDbModel())
+        notesDao.editNoteWithContent(
+            noteDbModel = processedNote.toDbModel(),
+            contentItems = processedContent.toListContentItemDbModel(note.id)
+        )
     }
 
     override fun getAllNotes(): Flow<List<Note>> = notesDao.getAllNotes().map { it.toListEntity() }
