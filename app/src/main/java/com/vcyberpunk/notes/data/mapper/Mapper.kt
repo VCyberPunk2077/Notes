@@ -1,48 +1,66 @@
 package com.vcyberpunk.notes.data.mapper
 
 import com.vcyberpunk.notes.data.local.entity.ContentItemDbModel
+import com.vcyberpunk.notes.data.local.entity.ContentType
 import com.vcyberpunk.notes.data.local.entity.NoteDbModel
+import com.vcyberpunk.notes.data.local.entity.NoteWithContentDbModel
 import com.vcyberpunk.notes.domain.entity.ContentItem
 import com.vcyberpunk.notes.domain.entity.Note
-import kotlinx.serialization.json.Json
 
 fun Note.toDbModel(): NoteDbModel {
-    val contentAsString = Json.encodeToString(this.content.toListContentItemDbModel())
     return NoteDbModel(
         id = id,
         title = title,
-        content = contentAsString,
         updatedAt = updatedAt,
         isPinned = isPinned
     )
 }
 
-fun List<ContentItem>.toListContentItemDbModel(): List<ContentItemDbModel> = map { contentItem ->
-    when (contentItem) {
-        is ContentItem.Image -> ContentItemDbModel.Image(url = contentItem.url)
-        is ContentItem.Text -> ContentItemDbModel.Text(text = contentItem.text)
+fun List<ContentItem>.toListContentItemDbModel(noteId: Int): List<ContentItemDbModel> =
+    mapIndexed { index, contentItem ->
+        when (contentItem) {
+            is ContentItem.Image -> {
+                ContentItemDbModel(
+                    noteId = noteId,
+                    type = ContentType.IMAGE,
+                    content = contentItem.url,
+                    order = index
+                )
+            }
+
+            is ContentItem.Text -> {
+                ContentItemDbModel(
+                    noteId = noteId,
+                    type = ContentType.TEXT,
+                    content = contentItem.text,
+                    order = index
+                )
+            }
+        }
     }
-}
 
 fun List<ContentItemDbModel>.toListContentItem(): List<ContentItem> = map { contentItemDbModel ->
-    when (contentItemDbModel) {
-        is ContentItemDbModel.Image -> ContentItem.Image(url = contentItemDbModel.url)
-        is ContentItemDbModel.Text -> ContentItem.Text(text = contentItemDbModel.text)
+    when (contentItemDbModel.type) {
+        ContentType.TEXT -> {
+            ContentItem.Text(contentItemDbModel.content)
+        }
+
+        ContentType.IMAGE -> {
+            ContentItem.Image(contentItemDbModel.content)
+        }
     }
 }
 
-fun NoteDbModel.toEntity(): Note {
-    val contentItemDbModels =
-        Json.decodeFromString<List<ContentItemDbModel>>(this.content)
+fun NoteWithContentDbModel.toEntity(): Note {
     return Note(
-        id = id,
-        title = title,
-        content = contentItemDbModels.toListContentItem(),
-        updatedAt = updatedAt,
-        isPinned = isPinned
+        id = noteDbModel.id,
+        title = noteDbModel.title,
+        content = contentItemDbModel.toListContentItem(),
+        updatedAt = noteDbModel.updatedAt,
+        isPinned = noteDbModel.isPinned
     )
 }
 
-fun List<NoteDbModel>.toListEntity(): List<Note> = map {
+fun List<NoteWithContentDbModel>.toListEntity(): List<Note> = map {
     it.toEntity()
 }
