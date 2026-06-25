@@ -38,9 +38,12 @@ class EditNoteViewModel @AssistedInject constructor(
             EditNoteCommand.Init -> {
                 viewModelScope.launch {
                     val note = getNoteUseCase(noteId = noteId)
+                    val newContent = note.content.toMutableList().apply {
+                        add(ContentItem.Text(""))
+                    }
 
                     _state.update {
-                        EditNoteState.Editing(note)
+                        EditNoteState.Editing(note.copy(content = newContent))
                     }
                 }
             }
@@ -91,7 +94,10 @@ class EditNoteViewModel @AssistedInject constructor(
 
                     if (currentState is EditNoteState.Editing) {
                         val note = currentState.note
-                        editNoteUseCase(note = note)
+                        val content = note.content.filter {
+                            it !is ContentItem.Text || it.text.isNotBlank()
+                        }
+                        editNoteUseCase(note = note.copy(content = content))
                         _events.emit(EditNoteEvent.NavigateBack)
                     }
                 }
